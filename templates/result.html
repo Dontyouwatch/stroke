@@ -1,79 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stroke Prediction Result</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
+            font-family: sans-serif;
+            margin: 20px;
         }
-        .container {
-            max-width: 600px;
-            background: white;
-            padding: 20px;
-            margin: auto;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-        }
-        .risk {
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .advice {
-            font-size: 18px;
-            color: #555;
-        }
-        ul {
-            text-align: left;
-        }
-        .food {
-            font-size: 16px;
-            font-weight: bold;
-            color: #2e7d32;
-        }
-        .back-button {
-            display: inline-block;
+        .result-container {
             margin-top: 20px;
-            padding: 10px 15px;
-            background: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>🩺 Stroke Risk Prediction Result</h1>
-        <p><strong>Name:</strong> {{ name }}</p>
-        <p class="risk">Stroke Risk: {{ stroke_probability }}%</p>
-        <p class="advice">Risk Category: {{ risk_category }}</p>
-        <p class="advice">⚠️ {{ advice }}</p>
-
-        <h3>🔍 Reasons for Risk:</h3>
-        <ul>
-            {% for reason in reasons %}
-                <li>{{ reason }}</li>
-            {% endfor %}
-        </ul>
-
-        <h3 class="food">🍎 Recommended Foods:</h3>
-        <ul>
-            {% for food in food_recommendation %}
-                <li>{{ food }}</li>
-            {% endfor %}
-        </ul>
-
-        <a href="/" class="back-button">🔄 Check Again</a>
+    <h1>Stroke Prediction Result</h1>
+    <div class="result-container">
+        <p>Stroke Risk: {{ stroke_risk }}</p>
+        <p>Probability: {{ probability }}%</p>
     </div>
-
+    <a href="/">Predict Again</a>
 </body>
 </html>
