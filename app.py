@@ -4,26 +4,22 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from flask_cors import CORS  # Import CORS
+import sys  # Import sys for exiting
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for the app
 
-
-# Load the scaler and model
+# Load the scaler, model, and expected columns
 try:
     with open('scaler.pkl', 'rb') as f:
         scaler = pickle.load(f)
-
     with open('strokemodel.pkl', 'rb') as f:
         model = pickle.load(f)
+    with open('model_columns.pkl', 'rb') as f:
+        expected_cols = pickle.load(f)  # Load expected columns
 except Exception as e:
-    print(f"Error loading model or scaler: {e}")
-    #  Handle this error.  The app should not run without the model and scaler.
-    #  A better approach would be to raise an exception, or sys.exit()
-    model = None
-    scaler = None
-
-
+    print(f"Error loading model, scaler, or columns: {e}")
+    sys.exit("Error: Failed to load model, scaler, or column information. Exiting application.")  # Exit on load failure
 
 # Risk Categorization
 risk_levels = [
@@ -65,8 +61,8 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if model is None or scaler is None:
-        return "Model or scaler not loaded.  The application cannot run.", 500
+    if model is None or scaler is None or not expected_cols:
+        return "Model or scaler or column information not loaded. The application cannot run.", 500
     try:
         # Get data from form
         name = request.form.get('name')
@@ -102,27 +98,30 @@ def predict():
         }])
 
         # Feature Engineering (same as in training - IMPORTANT)
-        input_data["BMI_Category"] = pd.cut(input_data["BMI"], bins=[0, 18.5, 24.9, 29.9, np.inf], labels=[0, 1, 2, 3]).astype(int)
-        input_data["Cholesterol_Category"] = pd.cut(pd.Series([200]), bins=[0, 180, 240, np.inf], labels=[0, 1, 2]).astype(int)  # Use a dummy value
-        input_data["Age_Group"] = pd.cut(input_data["Age"], bins=[0, 40, 60, np.inf], labels=[0, 1, 2]).astype(int)
+        input_data["BMI_Category"] = pd.cut(input_data["BMI"], bins=[0, 18.5, 24.9, 29.9, np.inf],
+                                               labels=[0, 1, 2, 3]).astype(int)
+        input_data["Cholesterol_Category"] = pd.cut(pd.Series([200]), bins=[0, 180, 240, np.inf],
+                                                       labels=[0, 1, 2]).astype(int)  # Use a dummy value
+        input_data["Age_Group"] = pd.cut(input_data["Age"], bins=[0, 40, 60, np.inf],
+                                               labels=[0, 1, 2]).astype(int)
         input_data["BMI_Hypertension"] = input_data["BMI"] * input_data["Hypertension"]
-        input_data["Cholesterol_AFib"] = 200 * input_data["AFib"]  # Use dummy
+        input_data["Cholesterol_AFib"] = 200 * input_data["AFib"]
 
         # Convert categorical features to numerical using get_dummies
-        input_data = pd.get_dummies(input_data, columns=["BMI_Category", "Cholesterol_Category", "Age_Group"], drop_first=True)
+        input_data = pd.get_dummies(input_data,
+                                       columns=['Sex', 'Smoking', 'Diabetes', 'Hypertension', 'Atrial_Fibrillation',
+                                                'Previous_Stroke', 'Family_History', 'BMI_Category',
+                                                'Cholesterol_Category', 'Age_Group'], drop_first=True)
 
-        # Scale the input data
+        # Scale the input data, Ensure no column names during scaling
         numeric_features = ["Age", "BMI", "BMI_Hypertension", "Cholesterol_AFib"]
-        input_data[numeric_features] = scaler.transform(input_data[numeric_features])
+        input_data[numeric_features] = scaler.transform(input_data[numeric_features].values)
 
         # Align the input data with the columns used during training.   CRUCIAL
-        expected_cols = ['Age', 'Sex', 'BMI', 'Smoking', 'Diabetes', 'Hypertension', 'AFib', 'Previous_Stroke',
-                         'Family_History', 'BMI_Hypertension', 'Cholesterol_AFib', 'BMI_Category_1', 'BMI_Category_2',
-                         'BMI_Category_3', 'Cholesterol_Category_1', 'Cholesterol_Category_2', 'Age_Group_1', 'Age_Group_2']
         missing_cols = set(expected_cols) - set(input_data.columns)
         for c in missing_cols:
             input_data[c] = 0
-        input_data = input_data[expected_cols]
+        input_data = input_data[expected_cols]  # Ensure correct column order
 
         # Make prediction
         stroke_probability = model.predict_proba(input_data)[0][1] * 100  # Probability in %
@@ -166,8 +165,8 @@ def predict():
                                food_recommendation=recommended_foods)
 
     except Exception as e:
+        print(f"Error in /predict: {e}")  # Log the error
         return jsonify({"error": str(e)}), 500  # Return JSON error with 500 status code
-
 
 
 if __name__ == '__main__':
