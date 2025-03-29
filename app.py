@@ -45,7 +45,7 @@ def predict():
         atrial_fibrillation = request.form.get('atrial_fibrillation', 'no')
         previous_stroke = request.form.get('previous_stroke', 'no')
         family_history = request.form.get('family_history', 'no')
-        
+
         # Convert categorical values 🔄
         sex = 1 if sex == 'male' else 0
         smoking = int(smoking)
@@ -54,70 +54,65 @@ def predict():
         atrial_fibrillation = 1 if atrial_fibrillation == 'yes' else 0
         previous_stroke = 1 if previous_stroke == 'yes' else 0
         family_history = 1 if family_history == 'yes' else 0
-        
+
         # Prepare input data 🛠️
         input_data = np.array([
             age, sex, bmi, smoking, diabetes, hypertension, atrial_fibrillation, previous_stroke, family_history
         ]).reshape(1, -1)
-        
+
         # Scale the input 🔬
         scaled_data = scaler.transform(input_data)
-        
+
         # Predict stroke probability 📊
         stroke_probability = model.predict_proba(scaled_data)[0][1] * 100  # Probability in %
-        
+
         # Categorize risk 🎯
         risk_category, advice = next((cat, adv) for max_perc, cat, adv in risk_levels if stroke_probability <= max_perc)
-        
+
         # Determine risk factors 🔎
         reasons = []
+        food_recommendations = []
+        
         if age >= 60:
             reasons.append("🔸 **Age is 60 or above**, which increases stroke risk.")
-        if bmi < 18.5 or bmi > 24.9:
-            reasons.append("🔸 **Unhealthy BMI** (underweight or overweight).")
+            food_recommendations.append("🥗 **Increase intake of Omega-3 rich foods** like salmon, walnuts, and flaxseeds.")
+        
+        if bmi < 18.5:
+            reasons.append("🔸 **Underweight BMI** can indicate poor nutrition.")
+            food_recommendations.append("🍚 **Include nutrient-dense foods** like nuts, avocados, and lean proteins.")
+        
+        if bmi > 24.9:
+            reasons.append("🔸 **Overweight BMI** (above 24.9) increases stroke risk.")
+            food_recommendations.append("🥦 **Reduce processed foods and increase fiber intake** (vegetables, whole grains).")
+
         if smoking:
-            reasons.append("🔸 **Smoking** 🚬 damages blood vessels, increasing stroke risk.")
+            reasons.append("🔸 **Smoking** 🌬 damages blood vessels, increasing stroke risk.")
+            food_recommendations.append("🍊 **Eat more citrus fruits and green tea** to help detoxify the body.")
+
         if diabetes:
-            reasons.append("🔸 **Diabetes** 🍬 increases stroke risk by damaging blood vessels.")
+            reasons.append("🔸 **Diabetes** 🌬 increases stroke risk by damaging blood vessels.")
+            food_recommendations.append("🍓 **Increase fiber intake** (berries, legumes, oats) and avoid high-sugar foods.")
+
         if hypertension:
             reasons.append("🔸 **Hypertension** 💓 (high blood pressure) detected.")
+            food_recommendations.append("🥑 **Increase potassium-rich foods** (bananas, spinach, avocados) and reduce salt intake.")
+
         if atrial_fibrillation:
             reasons.append("🔸 **Atrial fibrillation** ⚡ detected, increasing risk.")
+            food_recommendations.append("🍵 **Drink herbal teas** (ginger, green tea) and avoid excessive caffeine.")
+
         if previous_stroke:
             reasons.append("🔸 **Previous stroke** 🩸 significantly increases the risk of another stroke.")
+            food_recommendations.append("🌰 **Include nuts, seeds, and olive oil** to support brain health.")
+
         if family_history:
             reasons.append("🔸 **Family history of stroke** 🧬 may indicate a genetic predisposition.")
-        
-        # Physical Activity Recommendations 🏃‍♂️
-        if stroke_probability < 15:
-            activity_suggestion = "🏋️ **Regular Exercise**: Continue engaging in at least 30 minutes of moderate exercise daily."
-        elif stroke_probability < 30:
-            activity_suggestion = "🚶 **Increase Physical Activity**: Brisk walking, jogging, or swimming can help maintain good heart health."
-        else:
-            activity_suggestion = "⚠️ **Consult a Doctor**: Before engaging in any intense physical activity, consult your physician."
+            food_recommendations.append("🥕 **Eat a heart-healthy diet rich in antioxidants** (carrots, leafy greens).")
 
-        # Dietary Recommendations 🍎
-        if stroke_probability < 15:
-            diet_suggestion = "🥗 **Balanced Diet**: Continue eating fiber-rich foods like fruits, vegetables, and whole grains."
-            food_suggestion = "🍏 Apples, 🥦 Broccoli, 🥜 Almonds, 🥒 Cucumbers, 🍓 Berries"
-        elif stroke_probability < 30:
-            diet_suggestion = "🍣 **Heart-Healthy Foods**: Include omega-3 fatty acids from fish, nuts, and seeds."
-            food_suggestion = "🐟 Salmon, 🥑 Avocado, 🌰 Walnuts, 🍊 Oranges, 🥬 Spinach"
-        elif stroke_probability < 50:
-            diet_suggestion = "🛑 **Reduce Sodium & Sugars**: Avoid processed foods, high salt intake, and sugary beverages."
-            food_suggestion = "🍗 Lean chicken, 🍚 Brown rice, 🫑 Bell peppers, 🥕 Carrots, 🥦 Kale"
-        else:
-            diet_suggestion = "🚨 **Strict Diet Control**: Avoid all processed foods, high-fat dairy, and excessive sodium."
-            food_suggestion = "🍵 Green tea, 🥒 Leafy greens, 🫘 Lentils, 🍠 Sweet potatoes, 🍊 Citrus fruits"
-
-        # Render results in HTML 📄
+        # Render results in HTML 📝
         return render_template('result.html', name=name, stroke_probability=round(stroke_probability, 2),
                                risk_category=risk_category, advice=advice, reasons=reasons,
-                               activity_suggestion=activity_suggestion, diet_suggestion=diet_suggestion,
-                               food_suggestion=food_suggestion)
+                               food_recommendations=food_recommendations)
     
     except Exception as e:
         return render_template('error.html', error=str(e))
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
