@@ -5,3 +5,5 @@ scikit-learn
 gunicorn
 xgboost
 flask-cors
+joblib
+
