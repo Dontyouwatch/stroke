@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stroke Prediction Form</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: url('https://via.placeholder.com/1920x1080') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      width: 350px;
+      transition: all 0.3s ease;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #555;
+      cursor: pointer;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #007BFF;
+      outline: none;
+    }
+
+    .bmi-dropdown {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: none;
+      gap: 0.5rem;
+    }
+
+    .bmi-dropdown.active {
+      display: flex;
+    }
+
+    .bmi-dropdown input {
+      width: 48%;
+      margin-bottom: 0;
+    }
+
+    .form-group button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .form-group button:hover {
+      background: #0056b3;
+    }
+
+    /* Description Styling */
+    .description {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #555;
+      display: none;
+    }
+
+    .description.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Stroke Prediction Form</h2>
+    <form id="stroke-form">
+      <!-- Name Field -->
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+        <div class="description" id="name-description">Enter your full name for identification.</div>
+      </div>
+
+      <!-- Age Field -->
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" id="age" name="age" required>
+        <div class="description" id="age-description">Age is a key factor in stroke risk. Risk increases with age.</div>
+      </div>
+
+      <!-- Sex Field -->
+      <div class="form-group">
+        <label for="sex">Sex</label>
+        <select id="sex" name="sex" required>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        <div class="description" id="sex-description">Men are at a slightly higher risk of stroke than women.</div>
+      </div>
+
+      <!-- BMI Field -->
+      <div class="form-group">
+        <label for="bmi">BMI</label>
+        <input type="number" id="bmi" name="bmi" readonly required>
+        <div class="bmi-dropdown" id="bmiDropdown">
+          <input type="number" id="height" name="height" placeholder="Height (cm)" min="100" max="250" required>
+          <input type="number" id="weight" name="weight" placeholder="Weight (kg)" min="30" max="200" required>
+        </div>
+        <div class="description" id="bmi-description">BMI helps assess obesity, a risk factor for stroke. Enter height (100-250 cm) and weight (30-200 kg).</div>
+      </div>
+
+      <!-- Smoking Field -->
+      <div class="form-group">
+        <label for="smoking">Smoking Status</label>
+        <select id="smoking" name="smoking" required>
+          <option value="0">Non-Smoker</option>
+          <option value="1">Smoker</option>
+        </select>
+        <div class="description" id="smoking-description">Smoking damages blood vessels, increasing stroke risk.</div>
+      </div>
+
+      <!-- Diabetes Field -->
+      <div class="form-group">
+        <label for="diabetes">Diabetes</label>
+        <select id="diabetes" name="diabetes" required>
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
+        <div class="description" id="diabetes-description">Diabetes increases stroke risk by damaging blood vessels.</div>
+      </div>
+
+      <!-- Hypertension Field -->
+      <div class="form-group">
+        <label for="hypertension">Hypertension</label>
+        <select id="hypertension" name="hypertension" required>
+          <option value="0">Normal (up to 120 mmHg)</option>
+          <option value="1">Medium (140-180 mmHg)</option>
+          <option value="2">Very High Risk (>180 mmHg)</option>
+        </select>
+        <div class="description" id="hypertension-description">High blood pressure is the leading cause of stroke.</div>
+      </div>
+
+      <!-- Atrial Fibrillation Field -->
+      <div class="form-group">
+        <label for="atrial-fibrillation">Atrial Fibrillation</label>
+        <select id="atrial-fibrillation" name="atrial-fibrillation" required>
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
+        <div class="description" id="afib-description">Atrial fibrillation increases stroke risk by causing blood clots.</div>
+      </div>
+
+      <!-- Previous Stroke Field -->
+      <div class="form-group">
+        <label for="previous-stroke">Previous Stroke</label>
+        <select id="previous-stroke" name="previous-stroke" required>
+          <option value="no">No</option>
+          <option value="yes">Yes</yes>
+        </select>
+        <div class="description" id="prev-stroke-description">A history of stroke significantly increases the risk of another stroke.</div>
+      </div>
+
+      <!-- Family History Field -->
+      <div class="form-group">
+        <label for="family-history">Family History of Stroke</label>
+        <select id="family-history" name="family-history" required>
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
+        <div class="description" id="family-history-description">A family history of stroke may indicate a genetic predisposition.</div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-group">
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
+    <div id="prediction-result" style="margin-top: 20px;">
+      <!-- Results will be displayed here -->
+    </div>
+
+  </div>
+
+  <script>
+    const bmiInput = document.getElementById('bmi');
+    const bmiDropdown = document.getElementById('bmiDropdown');
+    const heightInput = document.getElementById('height');
+    const weightInput = document.getElementById('weight');
+
+    // Open BMI dropdown when BMI input is clicked
+    bmiInput.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent the click event from propagating to the document
+      bmiDropdown.classList.add('active');
+    });
+
+    // Close BMI dropdown when clicking outside the BMI input or dropdown
+    document.addEventListener('click', (event) => {
+      if (!bmiInput.contains(event.target) && !bmiDropdown.contains(event.target)) {
+        bmiDropdown.classList.remove('active');
+      }
+    });
+
+    // Prevent dropdown from closing when interacting with height or weight inputs
+    bmiDropdown.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent the click event from propagating to the document
+    });
+
+    // Calculate BMI when both height and weight are entered
+    heightInput.addEventListener('input', calculateBMI);
+    weightInput.addEventListener('input', calculateBMI);
+
+    function calculateBMI() {
+      const height = parseFloat(heightInput.value) / 100; // Convert cm to meters
+      const weight = parseFloat(weightInput.value);
+
+      // Wait for 2 digits in weight input before calculating BMI
+      if (height && weight && weightInput.value.length >= 2) {
+        const bmi = (weight / (height * height)).toFixed(2); // Calculate BMI
+        bmiInput.value = bmi; // Set the BMI value in the input field
+        bmiDropdown.classList.remove('active'); // Close the dropdown
+      }
+    }
+
+    // Show descriptions when interacting with form fields
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach(group => {
+      const input = group.querySelector('input, select');
+      const description = group.querySelector('.description');
+
+      if (input && description) {  // Check if both elements exist
+        input.addEventListener('focus', () => {
+          description.classList.add('visible');
+        });
+
+        input.addEventListener('blur', () => {
+          description.classList.remove('visible');
+        });
+      }
+    });
+
+    // Form Submission
+    document.getElementById('stroke-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+
+      fetch('/predict', {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+
+        // Update the HTML with the results
+        const resultDiv = document.getElementById('prediction-result');
+        if (data.error) {
+          resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+        } else {
+          let reasonsHTML = data.reasons.map(reason => `<li>${reason}</li>`).join('');
+
+          resultDiv.innerHTML = `
+            <h3>Prediction Results</h3>
+            <p><strong>Name:</strong> ${data.name}</p>
+            <p><strong>Stroke Risk:</strong> ${data.stroke_percentage}%</p>
+            <p><strong>Risk Category:</strong> ${data.risk_category}</p>
+            <p><strong>Advice:</strong> ${data.advice}</p>
+            <p><strong>Reasons:</strong></p>
+            <ul>${reasonsHTML}</ul>
+            <p><strong>Recommended Foods:</strong> ${data.recommended_foods.join(', ')}</p>
+          `;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('prediction-result').innerHTML = `<p style="color: red;">Error: ${error}</p>`;
+      });
+    });
+  </script>
+</body>
+</html>
