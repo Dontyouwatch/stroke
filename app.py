@@ -59,10 +59,6 @@ foods = {
     }
 }
 
-@app.route('/')
-def home():
-    return render_template('index.html')  # Ensure this points to your input form
-
 @app.route('/predict', methods=['POST'])
 def predict():
     if model is None or scaler is None:
@@ -101,31 +97,28 @@ def predict():
             'Family_History': family_history
         }])
 
-
-        # Feature Engineering (same as in training -  IMPORTANT)
+        # Feature Engineering (same as in training - IMPORTANT)
         input_data["BMI_Category"] = pd.cut(input_data["BMI"], bins=[0, 18.5, 24.9, 29.9, np.inf], labels=[0, 1, 2, 3]).astype(int)
-        input_data["Cholesterol_Category"] = pd.cut(pd.Series([200]), bins=[0, 180, 240, np.inf], labels=[0, 1, 2]).astype(int)  #  Use a dummy value
+        input_data["Cholesterol_Category"] = pd.cut(pd.Series([200]), bins=[0, 180, 240, np.inf], labels=[0, 1, 2]).astype(int)  # Use a dummy value
         input_data["Age_Group"] = pd.cut(input_data["Age"], bins=[0, 40, 60, np.inf], labels=[0, 1, 2]).astype(int)
         input_data["BMI_Hypertension"] = input_data["BMI"] * input_data["Hypertension"]
-        input_data["Cholesterol_AFib"] = 200 * input_data["AFib"] # Use dummy
+        input_data["Cholesterol_AFib"] = 200 * input_data["AFib"]  # Use dummy
 
         # Convert categorical features to numerical using get_dummies
         input_data = pd.get_dummies(input_data, columns=["BMI_Category", "Cholesterol_Category", "Age_Group"], drop_first=True)
-
 
         # Scale the input data
         numeric_features = ["Age", "BMI", "BMI_Hypertension", "Cholesterol_AFib"]
         input_data[numeric_features] = scaler.transform(input_data[numeric_features])
 
-
         # Align the input data with the columns used during training.   CRUCIAL
-        expected_cols = ['Age', 'Sex', 'BMI', 'Smoking', 'Diabetes', 'Hypertension', 'AFib', 'Previous_Stroke', 'Family_History', 'BMI_Hypertension', 'Cholesterol_AFib', 'BMI_Category_1', 'BMI_Category_2', 'BMI_Category_3', 'Cholesterol_Category_1', 'Cholesterol_Category_2', 'Age_Group_1', 'Age_Group_2']
+        expected_cols = ['Age', 'Sex', 'BMI', 'Smoking', 'Diabetes', 'Hypertension', 'AFib', 'Previous_Stroke',
+                         'Family_History', 'BMI_Hypertension', 'Cholesterol_AFib', 'BMI_Category_1', 'BMI_Category_2',
+                         'BMI_Category_3', 'Cholesterol_Category_1', 'Cholesterol_Category_2', 'Age_Group_1', 'Age_Group_2']
         missing_cols = set(expected_cols) - set(input_data.columns)
         for c in missing_cols:
             input_data[c] = 0
         input_data = input_data[expected_cols]
-
-
 
         # Make prediction
         stroke_probability = model.predict_proba(input_data)[0][1] * 100  # Probability in %
@@ -170,8 +163,3 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500  # Return JSON error with 500 status code
-
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
