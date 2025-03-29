@@ -51,29 +51,29 @@
 </head>
 <body>
 
-<div class="container">
-    <h1>🩺 Stroke Risk Prediction Result</h1>
-    <p><strong>Name:</strong> {{ name }}</p>
-    <p class="risk">Stroke Risk: {{ stroke_probability }}%</p>
-    <p class="advice">Risk Category: {{ risk_category }}</p>
-    <p class="advice">⚠️ {{ advice }}</p>
+    <div class="container">
+        <h1>🩺 Stroke Risk Prediction Result</h1>
+        <p><strong>Name:</strong> {{ name }}</p>
+        <p class="risk">Stroke Risk: {{ stroke_probability }}%</p>
+        <p class="advice">Risk Category: {{ risk_category }}</p>
+        <p class="advice">⚠️ {{ advice }}</p>
 
-    <h3>🔍 Reasons for Risk:</h3>
-    <ul>
-        {% for reason in reasons %}
-            <li>{{ reason }}</li>
-        {% endfor %}
-    </ul>
+        <h3>🔍 Reasons for Risk:</h3>
+        <ul>
+            {% for reason in reasons %}
+                <li>{{ reason }}</li>
+            {% endfor %}
+        </ul>
 
-    <h3 class="food">🍎 Recommended Foods:</h3>
-    <ul>
-        {% for food in food_recommendation %}
-            <li>{{ food }}</li>
-        {% endfor %}
-    </ul>
+        <h3 class="food">🍎 Recommended Foods:</h3>
+        <ul>
+            {% for food in food_recommendation %}
+                <li>{{ food }}</li>
+            {% endfor %}
+        </ul>
 
-    <a href="/" class="back-button">🔄 Check Again</a>
-</div>
+        <a href="/" class="back-button">🔄 Check Again</a>
+    </div>
 
 </body>
 </html>
