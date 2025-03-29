@@ -67,7 +67,7 @@ def predict():
         input_data = prepare_input(data)
         prediction = model.predict_proba(input_data)[:, 1][0]
         result = "Yes" if prediction > 0.5 else "No"
-        return jsonify({'stroke_risk': result, 'probability': float(prediction)})
+        return render_template('result.html', stroke_risk=result, probability=float(prediction) * 100)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
