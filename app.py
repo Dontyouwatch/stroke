@@ -109,7 +109,7 @@ def predict():
 
         # Convert categorical features to numerical using get_dummies
         input_data = pd.get_dummies(input_data,
-                                       columns=['Sex', 'Smoking', 'Diabetes', 'Hypertension', 'Atrial_Fibrillation',
+                                       columns=['Sex', 'Smoking', 'Diabetes', 'Hypertension', 'AFib',
                                                 'Previous_Stroke', 'Family_History', 'BMI_Category',
                                                 'Cholesterol_Category', 'Age_Group'], drop_first=True)
 
