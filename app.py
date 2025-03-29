@@ -15,7 +15,7 @@ try:
         scaler = pickle.load(f)
     with open('strokemodel.pkl', 'rb') as f:
         model = pickle.load(f)
-    with open('model_columns.pkl', 'rb') as f:
+    with open('columns.pkl', 'rb') as f:
         expected_cols = pickle.load(f)  # Load expected columns
 except Exception as e:
     print(f"Error loading model, scaler, or columns: {e}")
