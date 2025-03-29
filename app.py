@@ -59,6 +59,10 @@ foods = {
     }
 }
 
+@app.route('/')
+def home():
+    return render_template('index.html')  # Ensure this points to your input form
+
 @app.route('/predict', methods=['POST'])
 def predict():
     if model is None or scaler is None:
@@ -163,3 +167,8 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500  # Return JSON error with 500 status code
+
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
